@@ -37,6 +37,7 @@ const parsePlayerParams = props => ({
     modestbranding: props.modestbranding === true ? 1 : undefined,
     rel: props.rel === false ? 0 : undefined,
     origin: props.origin,
+    quality: props.quality
   },
 });
 
@@ -54,6 +55,7 @@ export default class YouTube extends React.Component {
     showFullscreenButton: PropTypes.bool,
     rel: PropTypes.bool,
     origin: PropTypes.string,
+    quality: PropTypes.string,
     onError: PropTypes.func,
     onReady: PropTypes.func,
     onChangeState: PropTypes.func,
@@ -77,7 +79,7 @@ export default class YouTube extends React.Component {
   shouldComponentUpdate() {
     // Prevent unnecessary renders before the native component is ready to accept them
     if (this._isReady) return true;
-    else return false;
+    return false;
   }
 
   _onError = event => {
@@ -103,8 +105,7 @@ export default class YouTube extends React.Component {
   };
 
   _onChangeFullscreen = event => {
-    if (this.props.onChangeFullscreen)
-      this.props.onChangeFullscreen(event.nativeEvent);
+    if (this.props.onChangeFullscreen) this.props.onChangeFullscreen(event.nativeEvent);
   };
 
   _onProgress = event => {
@@ -112,10 +113,7 @@ export default class YouTube extends React.Component {
   };
 
   seekTo(seconds) {
-    NativeModules.YouTubeManager.seekTo(
-      ReactNative.findNodeHandle(this),
-      parseInt(seconds, 10),
-    );
+    NativeModules.YouTubeManager.seekTo(ReactNative.findNodeHandle(this), parseInt(seconds, 10));
   }
 
   nextVideo() {
@@ -127,6 +125,14 @@ export default class YouTube extends React.Component {
       ReactNative.findNodeHandle(this),
     );
   }
+
+  getAvailableQualityLevels() {
+     return NativeModules.YouTubeManager.getAvailableQualityLevels(ReactNative.findNodeHandle(this));
+   }
+
+  getPlaybackQuality() {
+     return NativeModules.YouTubeManager.getPlaybackQuality(ReactNative.findNodeHandle(this));
+   }
 
   playVideo() {
     NativeModules.YouTubeManager.playVideo(ReactNative.findNodeHandle(this));
@@ -156,7 +162,7 @@ export default class YouTube extends React.Component {
       NativeModules.YouTubeManager
         .videosIndex(ReactNative.findNodeHandle(this))
         .then(index => resolve(index))
-        .catch(errorMessage => reject(errorMessage)),
+        .catch(errorMessage => reject(errorMessage))
     );
   }
 
@@ -186,6 +192,7 @@ export default class YouTube extends React.Component {
         videoIds={this.props.videoIds}
         playlistId={this.props.playlistId}
         loopProp={this.props.loop}
+        qualityProp={this.props.quality}
         onError={this._onError}
         onReady={this._onReady}
         onChangeState={this._onChangeState}

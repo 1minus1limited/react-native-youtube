@@ -142,4 +142,36 @@ RCT_EXPORT_METHOD(currentTime:(nonnull NSNumber *)reactTag resolver:(RCTPromiseR
     }];
 }
 
+RCT_REMAP_METHOD(getAvailableQualityLevels,
+                 getAvailableQualityLevels:(nonnull NSNumber *)reactTag
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        RCTYouTube *youtube = viewRegistry[reactTag];
+        if ([youtube isKindOfClass:[RCTYouTube class]]) {
+            resolve([youtube availableQualityLevelsString]);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"com.eezytutorials.iosTuts" code:200 userInfo:@{ NSLocalizedFailureReasonErrorKey:@"LocalizedFailureReason"
+                                                                                                               }];
+            reject(@"cannot_get_quality_levels", @"React Tag in not RCTYouTube", error);
+        }
+    }];
+}
+
+RCT_REMAP_METHOD(getPlaybackQuality,
+                 getPlaybackQuality:(nonnull NSNumber *)reactTag
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        RCTYouTube *youtube = viewRegistry[reactTag];
+        if ([youtube isKindOfClass:[RCTYouTube class]]) {
+            resolve([youtube playbackQualityString]);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"com.eezytutorials.iosTuts" code:200 userInfo:@{ NSLocalizedFailureReasonErrorKey:@"LocalizedFailureReason"
+                                                                                                               }];
+            reject(@"cannot_get_playback_quality", @"React Tag in not RCTYouTube", error);
+        }
+    }];
+}
+
 @end

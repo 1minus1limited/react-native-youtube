@@ -24,6 +24,7 @@
     BOOL _isReady;
     BOOL _playOnLoad;
     BOOL _loop;
+    NSString * _quality;
 
     /* StatusBar visibility status before the player changed to fullscreen */
     // BOOL _isStatusBarHidden;
@@ -38,6 +39,7 @@
       _playOnLoad = NO;
       _loop = NO;
       _isFullscreen = NO;
+      _quality = @"default";
 
       [self addFullscreenObserver];
 
@@ -90,7 +92,7 @@
             @"isFullscreen": @(_isFullscreen),
             @"target": self.reactTag
         });
-        
+
         [[UIApplication sharedApplication] setStatusBarHidden:NO];
     }
 }
@@ -120,6 +122,14 @@
         else [self pauseVideo];
     }
 }
+
+- (void)setQualityProp:(NSString *)quality {
+     if (!_isReady) {
+         _quality = quality;
+     } else {
+         [self setPlaybackQuality:quality];
+     }
+ }
 
 - (void)setVideoId:(NSString *)videoId {
     if (videoId && _isReady) {
@@ -171,7 +181,9 @@
     if (_playOnLoad) [self playVideo];
 
     _isReady = YES;
-
+    if (![_quality isEqualToString:@"default"]) {
+       [self setPlaybackQuality:_quality];
+    }
     if (_onReady) {
         _onReady(@{@"target": self.reactTag});
     }
