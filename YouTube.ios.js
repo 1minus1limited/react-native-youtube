@@ -36,8 +36,7 @@ const parsePlayerParams = props => ({
     showinfo: props.showinfo === false ? 0 : undefined,
     modestbranding: props.modestbranding === true ? 1 : undefined,
     rel: props.rel === false ? 0 : undefined,
-    origin: props.origin,
-    quality: props.quality
+    origin: props.origin
   },
 });
 
